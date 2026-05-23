@@ -118,23 +118,16 @@
 /* PDF Preview Frame Styles */
 .pdf-preview-container {
   width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.pdf-iframe {
-  width: 100%;
   height: 680px;
-  border: none;
+  display: block;
 }
 
-.pdf-preview-container.inline .pdf-iframe {
+.pdf-preview-container.inline {
   height: 700px;
   border: 1px solid var(--border-color);
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
 }
 
 .pdf-loading {
@@ -180,7 +173,7 @@
   .dialog-body {
     padding: 0;
   }
-  .pdf-iframe {
+  .pdf-preview-container {
     height: 500px;
   }
   .dialog-footer {

@@ -8,10 +8,14 @@
   </div>
   
   <div class="dialog-body">
-    <div class="pdf-preview-container" *ngIf="pdfSafeUrl">
-      <iframe [src]="pdfSafeUrl" class="pdf-iframe" title="PDF Quotation Preview"></iframe>
+    <div class="pdf-preview-container" *ngIf="pdfBlob">
+      <ngx-extended-pdf-viewer 
+        [src]="pdfBlob" 
+        [height]="'100%'"
+        [showToolbar]="false">
+      </ngx-extended-pdf-viewer>
     </div>
-    <div class="pdf-loading" *ngIf="!pdfSafeUrl">
+    <div class="pdf-loading" *ngIf="!pdfBlob">
       <div class="spinner"></div>
       <p>Generating PDF Preview...</p>
     </div>
@@ -26,6 +30,10 @@
 </div>
 
 <!-- Inline rendering mode (fallback) -->
-<div class="pdf-preview-container inline" *ngIf="!isDialogMode && pdfSafeUrl">
-  <iframe [src]="pdfSafeUrl" class="pdf-iframe" title="PDF Quotation Preview"></iframe>
+<div class="pdf-preview-container inline" *ngIf="!isDialogMode && pdfBlob">
+  <ngx-extended-pdf-viewer 
+    [src]="pdfBlob" 
+    [height]="'100%'"
+    [showToolbar]="false">
+  </ngx-extended-pdf-viewer>
 </div>

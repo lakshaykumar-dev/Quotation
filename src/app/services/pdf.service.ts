@@ -291,4 +291,9 @@ export class PdfService {
     const blob = doc.output('blob');
     return URL.createObjectURL(blob);
   }
+
+  async generatePdfBlob(quotation: Quotation, signatureUrl: string = 'signature.jpg'): Promise<Blob> {
+    const doc = await this.buildPdfDocument(quotation, signatureUrl);
+    return doc.output('blob');
+  }
 }

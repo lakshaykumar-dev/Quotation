@@ -1,28 +1,26 @@
-import { Component, Inject, Optional, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, Inject, Optional, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 import { Quotation } from '../../models/quotation.model';
 import { PdfService } from '../../services/pdf.service';
 
 @Component({
   selector: 'app-quotation-preview',
   standalone: true,
-  imports: [CommonModule, MatDialogModule],
+  imports: [CommonModule, MatDialogModule, NgxExtendedPdfViewerModule],
   templateUrl: './quotation-preview.html',
   styleUrl: './quotation-preview.css'
 })
-export class QuotationPreviewComponent implements OnInit, OnDestroy {
+export class QuotationPreviewComponent implements OnInit {
   quotation!: Quotation;
   isDialogMode: boolean = false;
-  pdfSafeUrl: SafeResourceUrl | null = null;
-  private pdfRawUrl: string | null = null;
+  pdfBlob: Blob | null = null;
 
   constructor(
     @Optional() @Inject(MAT_DIALOG_DATA) public data: Quotation,
     @Optional() private dialogRef: MatDialogRef<QuotationPreviewComponent>,
     private pdfService: PdfService,
-    private sanitizer: DomSanitizer,
     private cdr: ChangeDetectorRef
   ) {
     if (data) {
@@ -37,21 +35,14 @@ export class QuotationPreviewComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy() {
-    if (this.pdfRawUrl) {
-      URL.revokeObjectURL(this.pdfRawUrl);
-    }
-  }
-
   async loadPdfPreview() {
     try {
-      const rawUrl = await this.pdfService.generatePdfBlobUrl(this.quotation, 'signature.jpg');
-      this.pdfRawUrl = rawUrl;
+      const blob = await this.pdfService.generatePdfBlob(this.quotation, 'signature.jpg');
       
       // Wrap in setTimeout to shift change detection to the next macro-task cycle,
       // resolving the NG0100 ExpressionChangedAfterItHasBeenCheckedError.
       setTimeout(() => {
-        this.pdfSafeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(rawUrl);
+        this.pdfBlob = blob;
         this.cdr.detectChanges();
       });
     } catch (error) {
