@@ -32,7 +32,7 @@ export class PdfService {
     });
   }
 
-  async generatePdf(quotation: Quotation, signatureUrl: string = 'signature.jpg'): Promise<void> {
+  async buildPdfDocument(quotation: Quotation, signatureUrl: string = 'signature.jpg'): Promise<jsPDF> {
     const doc = new jsPDF({
       orientation: 'portrait',
       unit: 'mm',
@@ -277,7 +277,18 @@ export class PdfService {
     doc.text(thankYouText, 105, bottomLineY + 1, { align: 'center' });
     doc.line(105 + (textWidth / 2) + 2, bottomLineY, endX, bottomLineY);
 
-    // Save the PDF
+    // Return the generated jsPDF instance
+    return doc;
+  }
+
+  async generatePdf(quotation: Quotation, signatureUrl: string = 'signature.jpg'): Promise<void> {
+    const doc = await this.buildPdfDocument(quotation, signatureUrl);
     doc.save(`Quotation_${quotation.date.replace(/\//g, '-')}.pdf`);
+  }
+
+  async generatePdfBlobUrl(quotation: Quotation, signatureUrl: string = 'signature.jpg'): Promise<string> {
+    const doc = await this.buildPdfDocument(quotation, signatureUrl);
+    const blob = doc.output('blob');
+    return URL.createObjectURL(blob);
   }
 }

@@ -8,8 +8,12 @@
   </div>
   
   <div class="dialog-body">
-    <div class="a4-page-container">
-      <ng-container *ngTemplateOutlet="previewContent"></ng-container>
+    <div class="pdf-preview-container" *ngIf="pdfSafeUrl">
+      <iframe [src]="pdfSafeUrl" class="pdf-iframe" title="PDF Quotation Preview"></iframe>
+    </div>
+    <div class="pdf-loading" *ngIf="!pdfSafeUrl">
+      <div class="spinner"></div>
+      <p>Generating PDF Preview...</p>
     </div>
   </div>
 
@@ -21,146 +25,7 @@
   </div>
 </div>
 
-<div class="a4-page-container" *ngIf="!isDialogMode">
-  <ng-container *ngTemplateOutlet="previewContent"></ng-container>
+<!-- Inline rendering mode (fallback) -->
+<div class="pdf-preview-container inline" *ngIf="!isDialogMode && pdfSafeUrl">
+  <iframe [src]="pdfSafeUrl" class="pdf-iframe" title="PDF Quotation Preview"></iframe>
 </div>
-
-<!-- Reusable Template for A4 Sheet -->
-<ng-template #previewContent>
-  <div class="a4-sheet" id="quotationPage">
-    <!-- Header: Business Info -->
-    <div class="header-section">
-      <h1 class="company-name">{{ quotation.companyDetails.name }}</h1>
-      <p class="company-address">ADDRESS :- {{ quotation.companyDetails.address }}</p>
-      <p class="company-gstin">GST :- {{ quotation.companyDetails.gstin }}</p>
-    </div>
-
-    <!-- Double Border Lines -->
-    <div class="double-border-container">
-      <div class="thick-border"></div>
-      <div class="thin-border"></div>
-    </div>
-
-    <!-- Quotation Meta (Date) -->
-    <div class="meta-section">
-      <div class="date-label">
-        <span class="bold-text">Date :-</span> {{ quotation.date | date:'dd/MM/yyyy' }}
-      </div>
-    </div>
-
-    <!-- Main Title -->
-    <div class="title-section">
-      <h2 class="quotation-title">QUOTATION</h2>
-      <div class="title-underline"></div>
-    </div>
-
-    <!-- Items Table -->
-    <div class="table-container">
-      <table class="items-table">
-        <thead>
-          <tr>
-            <th class="col-sr">Sr No.</th>
-            <th class="col-particular">Particular</th>
-            <th class="col-qty">Qty</th>
-            <th class="col-rate">Rate</th>
-            <th class="col-amount">Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Dynamic Row Generation -->
-          <tr *ngFor="let item of quotation.items; let i = index" class="item-row">
-            <td class="col-sr text-center">{{ item.srNo }}</td>
-            <td class="col-particular text-left">{{ item.particular }}</td>
-            <td class="col-qty text-center">{{ item.qty ? '[' + item.qty + ' ' + item.qtyUnit + ']' : '' }}</td>
-            <td class="col-rate text-center">
-              <span *ngIf="item.rate !== undefined && item.rate !== null && item.rate !== 0">
-                {{ item.rate }}/-<br><span class="rate-gst-label" *ngIf="item.isGst">(Including GST)</span>
-              </span>
-            </td>
-            <td class="col-amount text-center">
-              <span *ngIf="item.qty && item.rate">
-                {{ item.qty * item.rate }}/-<br><span class="rate-gst-label" *ngIf="item.isGst">(Including GST)</span>
-              </span>
-            </td>
-          </tr>
-          
-          <!-- Empty spacers to keep the height fixed, like in standard templates -->
-          <tr *ngFor="let empty of [].constructor(5 - quotation.items.length > 0 ? 5 - quotation.items.length : 0); let i = index" class="spacer-row">
-            <td class="col-sr"></td>
-            <td class="col-particular"></td>
-            <td class="col-qty"></td>
-            <td class="col-rate"></td>
-            <td class="col-amount"></td>
-          </tr>
-
-          <!-- CGST Row -->
-          <tr class="tax-row">
-            <td colspan="4" class="tax-label text-left font-normal">
-              CGST @ {{ quotation.cgstRate }}%
-            </td>
-            <td class="tax-value text-center font-normal">
-              {{ quotation.cgstAmount }}/-
-            </td>
-          </tr>
-
-          <!-- SGST Row -->
-          <tr class="tax-row">
-            <td colspan="4" class="tax-label text-left font-normal">
-              SGST @ {{ quotation.sgstRate }}%
-            </td>
-            <td class="tax-value text-center font-normal">
-              {{ quotation.sgstAmount }}/-
-            </td>
-          </tr>
-
-          <!-- TOTAL AMOUNT Row -->
-          <tr class="total-row">
-            <td colspan="4" class="total-label text-center bold-text">
-              TOTAL AMOUNT (Including GST)
-            </td>
-            <td class="total-value text-center bold-text">
-              {{ quotation.totalAmount }}/-
-            </td>
-          </tr>
-
-          <!-- Amount In Words Row -->
-          <tr class="amount-words-row">
-            <td colspan="5" class="words-container">
-              <div class="words-title">Amount in Words:</div>
-              <div class="words-value">{{ quotation.amountInWords }}</div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Footer Details: Bank & Signature -->
-    <div class="footer-details-section">
-      <!-- Bank details -->
-      <div class="bank-details-block">
-        <h4 class="bank-details-header">BANK DETAILS FOR {{ quotation.bankDetails.bankName }}</h4>
-        <p>BRANCH {{ quotation.bankDetails.branch }}</p>
-        <p>A/C NO :- {{ quotation.bankDetails.accountNumber }}</p>
-        <p>IFSC CODE :- {{ quotation.bankDetails.ifscCode }}</p>
-      </div>
-
-      <!-- Signature section -->
-      <div class="signature-block">
-        <h4 class="sig-company-header">For {{ quotation.companyDetails.name }}</h4>
-        <div class="signature-image-container">
-          <img src="/signature.jpg" alt="Signature" class="signature-img" />
-        </div>
-        <div class="sig-line"></div>
-        <div class="proprietor-label">Proprietor</div>
-        <div class="signature-caption">SIGNATURE</div>
-      </div>
-    </div>
-
-    <!-- Bottom Thank you statement -->
-    <div class="thank-you-container">
-      <div class="thank-you-line left"></div>
-      <div class="thank-you-text">THANK YOU FOR YOUR BUSINESS!</div>
-      <div class="thank-you-line right"></div>
-    </div>
-  </div>
-</ng-template>
