@@ -1,0 +1,27 @@
+<div class="app-dashboard">
+  <!-- Top Navigation Header -->
+  <header class="app-header">
+    <div class="brand-group">
+      <span class="brand-icon">⚡</span>
+      <div class="brand-text">
+        <h1>VITHAL HARDWARE</h1>
+        <p>Quotation Generator Portal</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <span class="status-indicator">● Active Session</span>
+    </div>
+  </header>
+
+  <!-- Main Dashboard Content -->
+  <main class="dashboard-content" *ngIf="quotation() as activeQuotation">
+    <div class="form-wrapper">
+      <app-quotation-form 
+        [quotation]="activeQuotation"
+        (quotationChange)="onQuotationChange($event)"
+        (previewQuotation)="openPreviewDialog()"
+        (downloadPdf)="downloadPdf()">
+      </app-quotation-form>
+    </div>
+  </main>
+</div>

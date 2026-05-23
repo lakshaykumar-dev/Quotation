@@ -1,0 +1,525 @@
+/* A4 sheet paper wrapper */
+.a4-page-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  overflow-x: auto;
+  padding: 10px 0;
+}
+
+.a4-sheet {
+  background: white;
+  width: 794px; /* A4 width in px at 96 DPI */
+  height: 1123px; /* A4 height in px at 96 DPI */
+  padding: 50px 60px 40px 60px; /* Precise page margins */
+  box-sizing: border-box;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  color: #111111;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  position: relative;
+  border-radius: 4px;
+}
+
+/* Header section styling */
+.header-section {
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+.company-name {
+  font-size: 42px;
+  font-weight: 800;
+  color: #c00000; /* Rich crimson red matching VITHAL HARDWARE */
+  margin: 0 0 8px 0;
+  letter-spacing: 0.5px;
+}
+
+.company-address {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f2c59; /* Navy blue */
+  margin: 0 0 6px 0;
+  letter-spacing: 0.3px;
+}
+
+.company-gstin {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f2c59;
+  margin: 0;
+  letter-spacing: 0.3px;
+}
+
+/* Double border separator */
+.double-border-container {
+  width: 100%;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.thick-border {
+  height: 4px;
+  background-color: #0f2c59;
+  width: 100%;
+}
+
+.thin-border {
+  height: 1px;
+  background-color: #0f2c59;
+  width: 100%;
+}
+
+/* Date block */
+.meta-section {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
+.date-label {
+  font-size: 16px;
+  color: #222222;
+}
+
+.bold-text {
+  font-weight: 700;
+}
+
+/* Quotation Header Title */
+.title-section {
+  text-align: center;
+  margin-bottom: 30px;
+  position: relative;
+  display: inline-block;
+  align-self: center;
+}
+
+.quotation-title {
+  font-size: 38px;
+  font-weight: 800;
+  color: #0f2c59;
+  margin: 0;
+  letter-spacing: 1.5px;
+}
+
+.title-underline {
+  height: 2px;
+  background-color: #0f2c59;
+  width: 100%;
+  margin-top: 4px;
+}
+
+/* Table Design */
+.table-container {
+  width: 100%;
+  flex-grow: 1; /* Stretch to fill space, push footers down */
+  margin-bottom: 30px;
+}
+
+.items-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1.5px solid #0f2c59; /* Dark navy border */
+  table-layout: fixed;
+}
+
+.items-table th,
+.items-table td {
+  border: 1.5px solid #0f2c59;
+  padding: 8px 10px;
+  box-sizing: border-box;
+}
+
+/* Table Headers */
+.items-table th {
+  background-color: #0f2c59;
+  color: white;
+  font-weight: 700;
+  font-size: 13px;
+  text-align: center;
+  padding: 10px 8px;
+}
+
+.items-table th .sub-header {
+  font-size: 10px;
+  font-weight: normal;
+}
+
+/* Column Widths */
+.col-sr {
+  width: 7%;
+}
+
+.col-particular {
+  width: 48%;
+}
+
+.col-qty {
+  width: 15%;
+}
+
+.col-rate {
+  width: 15%;
+}
+
+.col-amount {
+  width: 15%;
+}
+
+/* Alignments */
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.font-normal {
+  font-weight: normal !important;
+}
+
+/* Rows styling */
+.item-row {
+  height: 52px; /* Fixed row height to control design look */
+  font-size: 14px;
+  color: #111111;
+  vertical-align: middle;
+}
+
+.item-row td {
+  font-weight: 500;
+}
+
+.rate-gst-label {
+  font-size: 9px;
+  color: #555555;
+  font-weight: normal;
+  display: block;
+  margin-top: 2px;
+}
+
+/* Spacer rows for padding table */
+.spacer-row {
+  height: 60px;
+}
+
+/* Tax rows (CGST, SGST) */
+.tax-row {
+  height: 38px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.tax-label {
+  padding-left: 20px !important;
+  color: #111111;
+}
+
+.tax-value {
+  color: #111111;
+}
+
+/* Total Amount Row */
+.total-row {
+  height: 42px;
+  background-color: #d4e3fc; /* Light blue background */
+}
+
+.total-label {
+  font-size: 14px;
+  color: #0f2c59;
+  text-align: center !important;
+}
+
+.total-value {
+  font-size: 15px;
+  color: #0f2c59;
+}
+
+/* Amount in words */
+.amount-words-row {
+  height: 56px;
+}
+
+.words-container {
+  padding: 8px 15px !important;
+}
+
+.words-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #111111;
+  margin-bottom: 4px;
+}
+
+.words-value {
+  font-size: 13px;
+  color: #222222;
+}
+
+/* Footer Section: Bank & Signature */
+.footer-details-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: auto; /* Push to bottom of page */
+  padding-bottom: 20px;
+}
+
+/* Bank Details Block */
+.bank-details-block {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bank-details-header {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f2c59;
+  margin: 0 0 6px 0;
+  letter-spacing: 0.2px;
+}
+
+.bank-details-block p {
+  font-size: 12px;
+  color: #222222;
+  font-weight: 500;
+  margin: 0;
+}
+
+/* Signature block */
+.signature-block {
+  width: 35%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sig-company-header {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f2c59;
+  margin: 0 0 10px 0;
+}
+
+.signature-image-container {
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.signature-img {
+  max-height: 100%;
+  max-width: 120px;
+  object-fit: contain;
+}
+
+.sig-line {
+  height: 1px;
+  background-color: #222222;
+  width: 80%;
+  margin-bottom: 8px;
+}
+
+.proprietor-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f2c59;
+  margin-bottom: 2px;
+}
+
+.signature-caption {
+  font-size: 10px;
+  color: #555555;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+/* Bottom thank you business bar */
+.thank-you-container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 15px;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.thank-you-line {
+  height: 1px;
+  background-color: #0f2c59;
+  flex-grow: 1;
+}
+
+.thank-you-text {
+  font-size: 11px;
+  font-weight: 700;
+  color: #0f2c59;
+  white-space: nowrap;
+  letter-spacing: 0.5px;
+}
+
+/* Dialog Layout Styles */
+.dialog-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-height: 90vh;
+  background-color: var(--background, #f8fafc);
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  background-color: #ffffff;
+  border-bottom: 1px solid var(--border-color, #e2e8f0);
+}
+
+.dialog-header-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.preview-doc-icon {
+  font-size: 1.3rem;
+}
+
+.dialog-header h3 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--navy, #0f2c59);
+}
+
+.dialog-close-btn {
+  background: transparent;
+  border: none;
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--text-secondary, #475569);
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+}
+
+.dialog-close-btn:hover {
+  color: #dc2626;
+}
+
+.dialog-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+  background-color: #f1f3f5;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 24px;
+  background-color: #ffffff;
+  border-top: 1px solid var(--border-color, #e2e8f0);
+}
+
+.btn-dialog-close {
+  background-color: #ffffff;
+  border: 1px solid var(--border-color, #e2e8f0);
+  color: var(--text-primary, #0f172a);
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-dialog-close:hover {
+  background-color: #f8fafc;
+}
+
+.btn-dialog-download {
+  background: linear-gradient(135deg, var(--accent, #2563eb), #1d4ed8);
+  color: white;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: opacity 0.2s;
+}
+
+.btn-dialog-download:hover {
+  opacity: 0.9;
+}
+
+.btn-icon {
+  font-size: 1rem;
+}
+
+/* Material Dialog customization to prevent unnecessary paddings */
+::ng-deep .custom-dialog-container .mat-mdc-dialog-container .mdc-dialog__content {
+  padding: 0 !important;
+}
+
+::ng-deep .custom-dialog-container .mat-mdc-dialog-surface {
+  padding: 0 !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+}
+
+/* Mobile responsive dialog view */
+@media (max-width: 600px) {
+  .dialog-header {
+    padding: 12px 16px;
+  }
+  .dialog-body {
+    padding: 12px;
+  }
+  .dialog-footer {
+    padding: 12px 16px;
+    flex-direction: column;
+    width: 100%;
+    gap: 8px;
+  }
+  .btn-dialog-close,
+  .btn-dialog-download {
+    width: 100%;
+    justify-content: center;
+  }
+}

@@ -1,0 +1,173 @@
+<div class="form-container">
+  <div class="form-header">
+    <h2>Configure Quotation</h2>
+    <p>Fill in the details below to generate your professional quotation. Changes will reflect live in the preview.</p>
+  </div>
+
+  <!-- Section 1: Company Profile -->
+  <div class="form-card">
+    <div class="card-header">
+      <div class="header-icon">🏢</div>
+      <h3>Company Profile</h3>
+    </div>
+    <div class="card-body">
+      <div class="form-group">
+        <label for="compName">Company Name</label>
+        <input type="text" id="compName" [(ngModel)]="quotation.companyDetails.name" (ngModelChange)="onModelChange()" placeholder="e.g. VITHAL HARDWARE" />
+      </div>
+      <div class="form-group">
+        <label for="compAddress">Address</label>
+        <input type="text" id="compAddress" [(ngModel)]="quotation.companyDetails.address" (ngModelChange)="onModelChange()" placeholder="e.g. OPP JAIN DAIRY, MAHAL ROAD..." />
+      </div>
+      <div class="form-group">
+        <label for="compGstin">GST Number (GSTIN)</label>
+        <div class="input-with-action">
+          <input type="text" id="compGstin" [(ngModel)]="quotation.companyDetails.gstin" (ngModelChange)="onModelChange()" placeholder="e.g. 27BXLPT8519D1Z2" />
+          <button type="button" class="btn-secondary" (click)="saveCompanyDefaults()" title="Save Company details to browser local storage">Save Default</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 2: General & Tax Settings -->
+  <div class="form-card">
+    <div class="card-header">
+      <div class="header-icon">📅</div>
+      <h3>General & Tax Info</h3>
+    </div>
+    <div class="card-body grid-2">
+      <div class="form-group">
+        <label for="qDate">Quotation Date</label>
+        <input type="date" id="qDate" [(ngModel)]="quotation.date" (ngModelChange)="onModelChange()" />
+      </div>
+      <div class="form-group">
+        <label>Tax Structure</label>
+        <div class="tax-inputs">
+          <div class="tax-rate-field">
+            <span class="tax-label">CGST %</span>
+            <input type="text" [(ngModel)]="quotation.cgstRate" (ngModelChange)="onModelChange()" appNumberOnly [allowDecimals]="true" />
+          </div>
+          <div class="tax-rate-field">
+            <span class="tax-label">SGST %</span>
+            <input type="text" [(ngModel)]="quotation.sgstRate" (ngModelChange)="onModelChange()" appNumberOnly [allowDecimals]="true" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 3: Bank Details -->
+  <div class="form-card">
+    <div class="card-header">
+      <div class="header-icon">🏦</div>
+      <h3>Bank Account Details</h3>
+    </div>
+    <div class="card-body">
+      <div class="grid-2">
+        <div class="form-group">
+          <label for="bankName">Bank Details Header</label>
+          <input type="text" id="bankName" [(ngModel)]="quotation.bankDetails.bankName" (ngModelChange)="onModelChange()" placeholder="e.g. RTGS/NEFT ICICI BANK" />
+        </div>
+        <div class="form-group">
+          <label for="bankBranch">Branch</label>
+          <input type="text" id="bankBranch" [(ngModel)]="quotation.bankDetails.branch" (ngModelChange)="onModelChange()" placeholder="e.g. BHANDARA" />
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label for="bankAccNo">Account Number</label>
+          <input type="text" id="bankAccNo" [(ngModel)]="quotation.bankDetails.accountNumber" (ngModelChange)="onModelChange()" placeholder="e.g. 049505005700" />
+        </div>
+        <div class="form-group">
+          <label for="bankIfsc">IFSC Code</label>
+          <div class="input-with-action">
+            <input type="text" id="bankIfsc" [(ngModel)]="quotation.bankDetails.ifscCode" (ngModelChange)="onModelChange()" placeholder="e.g. ICIC0000495" />
+            <button type="button" class="btn-secondary" (click)="saveBankDefaults()" title="Save Bank details to browser local storage">Save Default</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 4: Items List -->
+  <div class="form-card">
+    <div class="card-header space-between">
+      <div class="flex-align">
+        <div class="header-icon">📦</div>
+        <h3>Items & Services</h3>
+      </div>
+      <button type="button" class="btn-add-item" (click)="addItem()">
+        <span class="plus-icon">+</span> Add Item
+      </button>
+    </div>
+    
+    <div class="card-body">
+      <div class="items-list-container">
+        <div *ngIf="quotation.items.length === 0" class="no-items">
+          No items added yet. Click "+ Add Item" to begin.
+        </div>
+        
+        <div *ngFor="let item of quotation.items; let i = index" class="item-row">
+          <div class="item-sr-no">{{ item.srNo }}</div>
+          
+          <div class="item-fields-grid">
+            <div class="form-group col-particular">
+              <label *ngIf="i === 0">Particular / Description</label>
+              <input type="text" [(ngModel)]="item.particular" (ngModelChange)="onModelChange()" placeholder="e.g. Safety Shoes" />
+            </div>
+
+            <div class="form-group col-gst">
+              <label *ngIf="i === 0">GST?</label>
+              <div class="checkbox-wrapper">
+                <input type="checkbox" [(ngModel)]="item.isGst" (ngModelChange)="onModelChange()" id="gst-{{i}}" />
+                <label for="gst-{{i}}" class="checkbox-label">Inc. GST</label>
+              </div>
+            </div>
+            
+            <div class="form-group col-qty">
+              <label *ngIf="i === 0">Qty</label>
+              <input type="text" [(ngModel)]="item.qty" (ngModelChange)="onModelChange()" appNumberOnly [allowDecimals]="false" />
+            </div>
+            
+            <div class="form-group col-unit">
+              <label *ngIf="i === 0">Unit</label>
+              <input type="text" [(ngModel)]="item.qtyUnit" (ngModelChange)="onModelChange()" placeholder="pair" />
+            </div>
+            
+            <div class="form-group col-rate">
+              <label *ngIf="i === 0">Rate</label>
+              <div class="rate-input-wrapper">
+                <input type="text" [(ngModel)]="item.rate" (ngModelChange)="onModelChange()" appNumberOnly [allowDecimals]="true" />
+                <span class="currency-label">/-</span>
+              </div>
+            </div>
+            
+            <div class="form-group col-amount">
+              <label *ngIf="i === 0">Amount</label>
+              <div class="read-only-amount">
+                {{ item.qty * item.rate | number:'1.2-2' }}/-
+              </div>
+            </div>
+
+            <div class="col-delete">
+              <label *ngIf="i === 0" class="delete-spacer"></label>
+              <button type="button" class="btn-delete" (click)="removeItem(i)" title="Remove this item">
+                <span class="delete-icon">&times;</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action: Export -->
+  <div class="form-actions dual-actions">
+    <button type="button" class="btn-preview-doc" (click)="triggerPreview()">
+      <span class="preview-icon">👁️</span> Preview Quotation
+    </button>
+    <button type="button" class="btn-download-pdf" (click)="triggerPdfDownload()">
+      <span class="pdf-icon">📄</span> Generate PDF
+    </button>
+  </div>
+</div>
