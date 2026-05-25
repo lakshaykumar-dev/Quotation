@@ -1,7 +1,7 @@
 # PowerShell script to run the Angular project
 
 Write-Host "=============================================" -ForegroundColor Cyan
-Write-Host "Starting Vithal Hardware Quotation Generator" -ForegroundColor Cyan
+Write-Host "Starting Vitthal Hardware Quotation Generator" -ForegroundColor Cyan
 Write-Host "=============================================" -ForegroundColor Cyan
 
 # Check for node_modules

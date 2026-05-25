@@ -13,7 +13,7 @@
     <div class="card-body">
       <div class="form-group">
         <label for="compName">Company Name</label>
-        <input type="text" id="compName" [(ngModel)]="quotation.companyDetails.name" (ngModelChange)="onModelChange()" placeholder="e.g. VITHAL HARDWARE" />
+        <input type="text" id="compName" [(ngModel)]="quotation.companyDetails.name" (ngModelChange)="onModelChange()" placeholder="e.g. VITTHAL HARDWARE" />
       </div>
       <div class="form-group">
         <label for="compAddress">Address</label>
@@ -22,7 +22,7 @@
       <div class="form-group">
         <label for="compGstin">GST Number (GSTIN)</label>
         <div class="input-with-action">
-          <input type="text" id="compGstin" [(ngModel)]="quotation.companyDetails.gstin" (ngModelChange)="onModelChange()" placeholder="e.g. 27BXLPT8519D1Z2" />
+          <input type="text" id="compGstin" [(ngModel)]="quotation.companyDetails.gstin" (ngModelChange)="onModelChange()" placeholder="e.g. 27BXIPT8519D1Z2" />
           <button type="button" class="btn-secondary" (click)="saveCompanyDefaults()" title="Save Company details to browser local storage">Save Default</button>
         </div>
       </div>

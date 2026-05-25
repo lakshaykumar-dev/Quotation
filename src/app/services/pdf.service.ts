@@ -51,7 +51,7 @@ export class PdfService {
     const endX = 195;
     const contentWidth = 180;
 
-    // 1. Header Details (VITHAL HARDWARE)
+    // 1. Header Details (VITTHAL HARDWARE)
     doc.setTextColor(RED[0], RED[1], RED[2]);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(28);

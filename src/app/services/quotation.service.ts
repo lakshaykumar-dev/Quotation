@@ -10,9 +10,9 @@ export class QuotationService {
 
   // Default values based on the template
   private defaultCompany: CompanyDetails = {
-    name: 'VITHAL HARDWARE',
+    name: 'VITTHAL HARDWARE',
     address: 'OPP JAIN DAIRY, MAHAL ROAD, BHANDARA - 441904',
-    gstin: '27BXLPT8519D1Z2'
+    gstin: '27BXIPT8519D1Z2'
   };
 
   private defaultBank: BankDetails = {
