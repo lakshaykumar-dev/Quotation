@@ -4,12 +4,10 @@ import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
-import android.graphics.pdf.PdfDocument
 import android.os.Handler
 import android.os.Looper
 import android.print.PrintAttributes
 import android.print.PrintManager
-import android.view.View
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.core.content.FileProvider
@@ -18,7 +16,6 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import java.io.File
-import java.io.FileOutputStream
 import java.util.Calendar
 
 class QuotationPdfModule(private val reactContext: ReactApplicationContext) :
@@ -73,65 +70,59 @@ class QuotationPdfModule(private val reactContext: ReactApplicationContext) :
         Handler(Looper.getMainLooper()).post {
             try {
                 val webView = WebView(currentAct)
+                webView.settings.javaScriptEnabled = true
                 webView.webViewClient = object : WebViewClient() {
                     override fun onPageFinished(view: WebView?, url: String?) {
                         try {
                             val outputDir = File(currentAct.cacheDir, "quotations")
-                            if (!outputDir.exists()) {
-                                outputDir.mkdirs()
-                            }
                             val safeName = jobName.replace("[^a-zA-Z0-9_-]".toRegex(), "_")
-                            val outputFile = File(outputDir, "$safeName.pdf")
-                            if (outputFile.exists()) {
-                                outputFile.delete()
-                            }
+                            val fileName = "$safeName.pdf"
 
-                            // A4 dimensions at 96 DPI: 794 x 1123 px
-                            val width = 794
-                            val height = 1123
+                            val printAttributes = PrintAttributes.Builder()
+                                .setMediaSize(PrintAttributes.MediaSize.ISO_A4)
+                                .setResolution(PrintAttributes.Resolution("pdf", "pdf", 300, 300))
+                                .setMinMargins(PrintAttributes.Margins.NO_MARGINS)
+                                .build()
 
-                            webView.measure(
-                                View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
-                                View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY)
-                            )
-                            webView.layout(0, 0, width, height)
+                            val adapter = webView.createPrintDocumentAdapter(jobName)
+                            val pdfPrint = android.print.PdfPrint(printAttributes)
 
-                            val document = PdfDocument()
-                            val pageInfo = PdfDocument.PageInfo.Builder(width, height, 1).create()
-                            val page = document.startPage(pageInfo)
+                            pdfPrint.print(adapter, outputDir, fileName, object : android.print.PdfPrint.Callback {
+                                override fun onSuccess(file: File) {
+                                    try {
+                                        val contentUri = FileProvider.getUriForFile(
+                                            currentAct,
+                                            "${currentAct.packageName}.provider",
+                                            file
+                                        )
 
-                            webView.draw(page.canvas)
-                            document.finishPage(page)
+                                        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                                            type = "application/pdf"
+                                            putExtra(Intent.EXTRA_STREAM, contentUri)
+                                            putExtra(Intent.EXTRA_SUBJECT, "$jobName.pdf")
+                                            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                        }
 
-                            val fos = FileOutputStream(outputFile)
-                            document.writeTo(fos)
-                            document.close()
-                            fos.close()
+                                        val chooser = Intent.createChooser(shareIntent, "Share Quotation PDF")
+                                        chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                        currentAct.startActivity(chooser)
 
-                            val contentUri = FileProvider.getUriForFile(
-                                currentAct,
-                                "${currentAct.packageName}.provider",
-                                outputFile
-                            )
+                                        promise.resolve(file.absolutePath)
+                                    } catch (ex: Exception) {
+                                        promise.reject("E_SHARE_INTENT", ex.localizedMessage ?: "Failed to open share sheet", ex)
+                                    }
+                                }
 
-                            val shareIntent = Intent(Intent.ACTION_SEND).apply {
-                                type = "application/pdf"
-                                putExtra(Intent.EXTRA_STREAM, contentUri)
-                                putExtra(Intent.EXTRA_SUBJECT, "$jobName.pdf")
-                                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                            }
-
-                            val chooser = Intent.createChooser(shareIntent, "Share Quotation PDF")
-                            chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            currentAct.startActivity(chooser)
-
-                            promise.resolve(outputFile.absolutePath)
+                                override fun onFailure(error: Throwable) {
+                                    promise.reject("E_PDF_WRITE", error.localizedMessage ?: "Failed to generate PDF", error)
+                                }
+                            })
                         } catch (err: Exception) {
-                            promise.reject("E_PDF_GEN", err.localizedMessage ?: "Failed to generate PDF", err)
+                            promise.reject("E_PDF_GEN", err.localizedMessage ?: "Failed to configure PDF", err)
                         }
                     }
                 }
-                webView.loadDataWithBaseURL(null, html, "text/html", "UTF-8", null)
+                webView.loadDataWithBaseURL("file:///android_asset/", html, "text/html", "UTF-8", null)
             } catch (e: Exception) {
                 promise.reject("E_SHARE_PDF", e.localizedMessage ?: "Error in PDF generation", e)
             }
