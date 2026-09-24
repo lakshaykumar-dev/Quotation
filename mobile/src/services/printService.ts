@@ -40,6 +40,24 @@ export const shareQuotationPdf = async (quotation: Quotation): Promise<boolean> 
   }
 };
 
+export const downloadQuotationPdf = async (quotation: Quotation): Promise<string> => {
+  const html = generateQuotationHtml(quotation);
+  const jobName = `Quotation_${quotation.date.replace(/[\/\\]/g, '-')}`;
+
+  if (Platform.OS === 'android' && QuotationPdfModule?.downloadPdf) {
+    try {
+      const savedPath = await QuotationPdfModule.downloadPdf(html, jobName);
+      return savedPath;
+    } catch (error) {
+      console.error('Failed to download quotation PDF:', error);
+      throw error;
+    }
+  } else {
+    console.warn('Native PDF download is only available on Android native builds');
+    return '';
+  }
+};
+
 export const showNativeDatePicker = async (currentDate: string): Promise<string | null> => {
   if (Platform.OS === 'android' && QuotationPdfModule?.openDatePicker) {
     try {

@@ -30,6 +30,7 @@ import {
 import {
   printQuotation,
   shareQuotationPdf,
+  downloadQuotationPdf,
   showNativeDatePicker,
 } from './src/services/printService';
 
@@ -162,11 +163,15 @@ function MainContent(): React.JSX.Element {
     setItems(updated);
   };
 
-  const handlePrint = async () => {
+  const handleDownloadPdf = async () => {
     try {
-      await printQuotation(currentQuotation);
+      const savedPath = await downloadQuotationPdf(currentQuotation);
+      Alert.alert(
+        'Download Complete',
+        `Quotation PDF has been saved to your Downloads folder!\n\nLocation: ${savedPath}`
+      );
     } catch (err: any) {
-      Alert.alert('Print Error', err?.message || 'Could not launch print service.');
+      Alert.alert('Download Error', err?.message || 'Could not download PDF to Downloads folder.');
     }
   };
 
@@ -474,8 +479,8 @@ function MainContent(): React.JSX.Element {
           <TouchableOpacity style={styles.btnSharePdf} onPress={handleSharePdf}>
             <Text style={styles.btnActionText}>📤 Share PDF</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.btnPrint} onPress={handlePrint}>
-            <Text style={styles.btnActionText}>🖨️ Print / Save PDF</Text>
+          <TouchableOpacity style={styles.btnDownloadPdf} onPress={handleDownloadPdf}>
+            <Text style={styles.btnActionText}>📥 Download PDF</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -753,7 +758,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     elevation: 3,
   },
-  btnPrint: {
+  btnDownloadPdf: {
     flex: 1,
     backgroundColor: '#c00000',
     paddingVertical: 14,

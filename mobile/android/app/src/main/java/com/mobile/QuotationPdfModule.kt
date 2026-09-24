@@ -2,20 +2,27 @@ package com.mobile
 
 import android.app.Activity
 import android.app.DatePickerDialog
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
+import android.os.Build
+import android.os.Environment
 import android.os.Handler
 import android.os.Looper
 import android.print.PrintAttributes
 import android.print.PrintManager
+import android.provider.MediaStore
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.Toast
 import androidx.core.content.FileProvider
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.util.Calendar
 
 class QuotationPdfModule(private val reactContext: ReactApplicationContext) :
@@ -125,6 +132,101 @@ class QuotationPdfModule(private val reactContext: ReactApplicationContext) :
                 webView.loadDataWithBaseURL("file:///android_asset/", html, "text/html", "UTF-8", null)
             } catch (e: Exception) {
                 promise.reject("E_SHARE_PDF", e.localizedMessage ?: "Error in PDF generation", e)
+            }
+        }
+    }
+
+    @ReactMethod
+    fun downloadPdf(html: String, jobName: String, promise: Promise) {
+        val currentAct: Activity? = reactContext.currentActivity
+        if (currentAct == null) {
+            promise.reject("E_ACTIVITY_NULL", "Current Activity is null")
+            return
+        }
+
+        Handler(Looper.getMainLooper()).post {
+            try {
+                val webView = WebView(currentAct)
+                webView.settings.javaScriptEnabled = true
+                webView.webViewClient = object : WebViewClient() {
+                    override fun onPageFinished(view: WebView?, url: String?) {
+                        try {
+                            val outputDir = File(currentAct.cacheDir, "quotations")
+                            val safeName = jobName.replace("[^a-zA-Z0-9_-]".toRegex(), "_")
+                            val fileName = "$safeName.pdf"
+
+                            val printAttributes = PrintAttributes.Builder()
+                                .setMediaSize(PrintAttributes.MediaSize.ISO_A4)
+                                .setResolution(PrintAttributes.Resolution("pdf", "pdf", 300, 300))
+                                .setMinMargins(PrintAttributes.Margins.NO_MARGINS)
+                                .build()
+
+                            val adapter = webView.createPrintDocumentAdapter(jobName)
+                            val pdfPrint = android.print.PdfPrint(printAttributes)
+
+                            pdfPrint.print(adapter, outputDir, fileName, object : android.print.PdfPrint.Callback {
+                                override fun onSuccess(tempFile: File) {
+                                    try {
+                                        val destinationFileName = "$safeName.pdf"
+                                        val savedPath: String
+
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                            val contentValues = ContentValues().apply {
+                                                put(MediaStore.MediaColumns.DISPLAY_NAME, destinationFileName)
+                                                put(MediaStore.MediaColumns.MIME_TYPE, "application/pdf")
+                                                put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+                                            }
+
+                                            val resolver = currentAct.contentResolver
+                                            val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, contentValues)
+                                                ?: throw Exception("Could not create entry in Downloads folder")
+
+                                            resolver.openOutputStream(uri)?.use { outStream ->
+                                                FileInputStream(tempFile).use { inStream ->
+                                                    inStream.copyTo(outStream)
+                                                }
+                                            }
+                                            savedPath = "Downloads/$destinationFileName"
+                                        } else {
+                                            val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                                            if (!downloadsDir.exists()) {
+                                                downloadsDir.mkdirs()
+                                            }
+                                            val destFile = File(downloadsDir, destinationFileName)
+                                            FileInputStream(tempFile).use { inStream ->
+                                                FileOutputStream(destFile).use { outStream ->
+                                                    inStream.copyTo(outStream)
+                                                }
+                                            }
+                                            savedPath = destFile.absolutePath
+                                        }
+
+                                        Handler(Looper.getMainLooper()).post {
+                                            Toast.makeText(
+                                                currentAct,
+                                                "Quotation saved to Downloads folder",
+                                                Toast.LENGTH_LONG
+                                            ).show()
+                                        }
+
+                                        promise.resolve(savedPath)
+                                    } catch (ex: Exception) {
+                                        promise.reject("E_SAVE_DOWNLOADS", ex.localizedMessage ?: "Failed to save to Downloads", ex)
+                                    }
+                                }
+
+                                override fun onFailure(error: Throwable) {
+                                    promise.reject("E_PDF_GEN", error.localizedMessage ?: "Failed to generate PDF", error)
+                                }
+                            })
+                        } catch (err: Exception) {
+                            promise.reject("E_PDF_CONFIG", err.localizedMessage ?: "Failed to configure PDF", err)
+                        }
+                    }
+                }
+                webView.loadDataWithBaseURL("file:///android_asset/", html, "text/html", "UTF-8", null)
+            } catch (e: Exception) {
+                promise.reject("E_DOWNLOAD_PDF", e.localizedMessage ?: "Error in PDF download", e)
             }
         }
     }
