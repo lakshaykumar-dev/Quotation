@@ -27,7 +27,11 @@ import {
   saveStoredBankDetails,
   calculateTotals,
 } from './src/services/quotationService';
-import { printQuotation, shareQuotationText } from './src/services/printService';
+import {
+  printQuotation,
+  shareQuotationText,
+  showNativeDatePicker,
+} from './src/services/printService';
 
 export default function App(): React.JSX.Element {
   return (
@@ -174,6 +178,17 @@ function MainContent(): React.JSX.Element {
     }
   };
 
+  const handleOpenDatePicker = async () => {
+    try {
+      const pickedDate = await showNativeDatePicker(date);
+      if (pickedDate) {
+        setDate(pickedDate);
+      }
+    } catch (err) {
+      console.warn('Date picker error:', err);
+    }
+  };
+
   if (loading) {
     return (
       <View style={styles.center}>
@@ -256,12 +271,14 @@ function MainContent(): React.JSX.Element {
           <View style={styles.row}>
             <View style={[styles.field, styles.flex1, { marginRight: 8 }]}>
               <Text style={styles.label}>Quotation Date</Text>
-              <TextInput
-                style={styles.input}
-                value={date}
-                onChangeText={setDate}
-                placeholder="DD/MM/YYYY"
-              />
+              <TouchableOpacity
+                style={[styles.input, styles.datePickerButton]}
+                onPress={handleOpenDatePicker}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.dateTextValue}>{date || 'Select Date'}</Text>
+                <Text style={styles.dateIcon}>📅</Text>
+              </TouchableOpacity>
             </View>
             <View style={[styles.field, styles.flex1, { marginRight: 8 }]}>
               <Text style={styles.label}>CGST %</Text>
@@ -573,6 +590,20 @@ const styles = StyleSheet.create({
     paddingVertical: 7,
     fontSize: 13,
     color: '#0f172a',
+  },
+  datePickerButton: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 8,
+  },
+  dateTextValue: {
+    fontSize: 13,
+    color: '#0f172a',
+    fontWeight: '600',
+  },
+  dateIcon: {
+    fontSize: 14,
   },
   inputWithAction: {
     flexDirection: 'row',

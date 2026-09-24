@@ -22,6 +22,19 @@ export const printQuotation = async (quotation: Quotation): Promise<boolean> => 
   }
 };
 
+export const showNativeDatePicker = async (currentDate: string): Promise<string | null> => {
+  if (Platform.OS === 'android' && QuotationPdfModule?.openDatePicker) {
+    try {
+      const selected = await QuotationPdfModule.openDatePicker(currentDate);
+      return selected || null;
+    } catch (error) {
+      console.warn('Native DatePicker error:', error);
+      return null;
+    }
+  }
+  return null;
+};
+
 export const shareQuotationText = async (quotation: Quotation) => {
   const itemsText = quotation.items
     .map(
