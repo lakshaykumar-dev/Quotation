@@ -209,35 +209,39 @@ function MainContent(): React.JSX.Element {
   return (
     <View style={[styles.safeArea, { paddingBottom: insets.bottom }]}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFCC00" translucent />
-
-      {/* Top Header Matching Shopfront Signboard */}
-      <View style={[styles.header, { paddingTop: statusBarHeight + 8 }]}>
-        <View style={styles.headerTopRow}>
-          <Image source={shopIcon} style={styles.headerLogo} resizeMode="cover" />
-          <View style={styles.headerTitleContainer}>
-            <View style={styles.marathiTitleRow}>
-              <Text style={styles.marathiTitle}>विठ्ठल हार्डवेअर</Text>
-              <Text style={styles.tradeMark}>™</Text>
-            </View>
-            <Text style={styles.brandTitle}>VITTHAL HARDWARE</Text>
-            <Text style={styles.brandSubtitle}>📍 Opp. Jain Dairy, Mahal Road, Bhandara</Text>
-          </View>
-        </View>
-
-        {/* Storefront Featured Brands Bar */}
-        <View style={styles.brandPillsRow}>
-          <View style={styles.brandPill}><Text style={styles.brandPillText}>🔧 COPPER Tools</Text></View>
-          <View style={styles.brandPill}><Text style={styles.brandPillText}>🏗️ SUPER STEEL</Text></View>
-          <View style={styles.brandPill}><Text style={styles.brandPillText}>✨ VERTIGO GOLD</Text></View>
-          <View style={styles.brandPill}><Text style={styles.brandPillText}>⚙️ FALL-GO</Text></View>
-        </View>
-      </View>
+      {/* Dedicated Status Bar Spacer to permanently protect status bar icons from scroll overlap */}
+      <View style={{ height: statusBarHeight, backgroundColor: '#FFCC00', width: '100%' }} />
 
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled">
-        {/* Section 1: Company Profile */}
+
+        {/* Top Header Matching Shopfront Signboard - Scrollable with page */}
+        <View style={styles.header}>
+          <View style={styles.headerTopRow}>
+            <Image source={shopIcon} style={styles.headerLogo} resizeMode="cover" />
+            <View style={styles.headerTitleContainer}>
+              <View style={styles.marathiTitleRow}>
+                <Text style={styles.marathiTitle}>विठ्ठल हार्डवेअर</Text>
+                <Text style={styles.tradeMark}>™</Text>
+              </View>
+              <Text style={styles.brandTitle}>VITTHAL HARDWARE</Text>
+              <Text style={styles.brandSubtitle}>📍 Opp. Jain Dairy, Mahal Road, Bhandara</Text>
+            </View>
+          </View>
+
+          {/* Storefront Featured Brands Bar */}
+          <View style={styles.brandPillsRow}>
+            <View style={styles.brandPill}><Text style={styles.brandPillText}>🔧 COPPER Tools</Text></View>
+            <View style={styles.brandPill}><Text style={styles.brandPillText}>🏗️ SUPER STEEL</Text></View>
+            <View style={styles.brandPill}><Text style={styles.brandPillText}>✨ VERTIGO GOLD</Text></View>
+            <View style={styles.brandPill}><Text style={styles.brandPillText}>⚙️ FALL-GO</Text></View>
+          </View>
+        </View>
+
+        <View style={styles.formContainer}>
+          {/* Section 1: Company Profile */}
         <View style={styles.card}>
           <View style={styles.cardHeader}>
             <Text style={styles.cardIcon}>🏢</Text>
@@ -498,8 +502,9 @@ function MainContent(): React.JSX.Element {
             <Text style={styles.btnActionText}>📥 Download PDF</Text>
           </TouchableOpacity>
         </View>
-      </ScrollView>
-    </View>
+      </View>
+    </ScrollView>
+  </View>
   );
 }
 
@@ -523,6 +528,7 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: '#FFCC00',
     paddingHorizontal: 14,
+    paddingTop: 12,
     paddingBottom: 10,
     borderBottomWidth: 3,
     borderBottomColor: '#E0A800',
@@ -606,8 +612,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    padding: 14,
     paddingBottom: 40,
+  },
+  formContainer: {
+    padding: 14,
   },
   card: {
     backgroundColor: '#ffffff',
