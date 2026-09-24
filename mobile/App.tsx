@@ -29,7 +29,7 @@ import {
 } from './src/services/quotationService';
 import {
   printQuotation,
-  shareQuotationText,
+  shareQuotationPdf,
   showNativeDatePicker,
 } from './src/services/printService';
 
@@ -170,11 +170,11 @@ function MainContent(): React.JSX.Element {
     }
   };
 
-  const handleShare = async () => {
+  const handleSharePdf = async () => {
     try {
-      await shareQuotationText(currentQuotation);
+      await shareQuotationPdf(currentQuotation);
     } catch (err: any) {
-      Alert.alert('Share Error', err?.message || 'Could not share quotation.');
+      Alert.alert('Share Error', err?.message || 'Could not generate or share PDF.');
     }
   };
 
@@ -471,11 +471,11 @@ function MainContent(): React.JSX.Element {
 
         {/* Action Buttons */}
         <View style={styles.actionsContainer}>
-          <TouchableOpacity style={styles.btnShare} onPress={handleShare}>
-            <Text style={styles.btnActionText}>📤 Share Text</Text>
+          <TouchableOpacity style={styles.btnSharePdf} onPress={handleSharePdf}>
+            <Text style={styles.btnActionText}>📤 Share PDF</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.btnPrint} onPress={handlePrint}>
-            <Text style={styles.btnActionText}>📄 Print / Save PDF</Text>
+            <Text style={styles.btnActionText}>🖨️ Print / Save PDF</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -744,9 +744,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: 6,
   },
-  btnShare: {
+  btnSharePdf: {
     flex: 1,
-    backgroundColor: '#334155',
+    backgroundColor: '#0f2c59',
     paddingVertical: 14,
     borderRadius: 8,
     marginRight: 8,

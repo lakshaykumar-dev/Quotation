@@ -3,16 +3,22 @@ package com.mobile
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Context
+import android.content.Intent
+import android.graphics.pdf.PdfDocument
 import android.os.Handler
 import android.os.Looper
 import android.print.PrintAttributes
 import android.print.PrintManager
+import android.view.View
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.core.content.FileProvider
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
+import java.io.File
+import java.io.FileOutputStream
 import java.util.Calendar
 
 class QuotationPdfModule(private val reactContext: ReactApplicationContext) :
@@ -52,6 +58,82 @@ class QuotationPdfModule(private val reactContext: ReactApplicationContext) :
                 webView.loadDataWithBaseURL(null, html, "text/html", "UTF-8", null)
             } catch (e: Exception) {
                 promise.reject("E_PRINT_ERROR", e.localizedMessage ?: "Unknown print error", e)
+            }
+        }
+    }
+
+    @ReactMethod
+    fun generateAndSharePdf(html: String, jobName: String, promise: Promise) {
+        val currentAct: Activity? = reactContext.currentActivity
+        if (currentAct == null) {
+            promise.reject("E_ACTIVITY_NULL", "Current Activity is null")
+            return
+        }
+
+        Handler(Looper.getMainLooper()).post {
+            try {
+                val webView = WebView(currentAct)
+                webView.webViewClient = object : WebViewClient() {
+                    override fun onPageFinished(view: WebView?, url: String?) {
+                        try {
+                            val outputDir = File(currentAct.cacheDir, "quotations")
+                            if (!outputDir.exists()) {
+                                outputDir.mkdirs()
+                            }
+                            val safeName = jobName.replace("[^a-zA-Z0-9_-]".toRegex(), "_")
+                            val outputFile = File(outputDir, "$safeName.pdf")
+                            if (outputFile.exists()) {
+                                outputFile.delete()
+                            }
+
+                            // A4 dimensions at 96 DPI: 794 x 1123 px
+                            val width = 794
+                            val height = 1123
+
+                            webView.measure(
+                                View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
+                                View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY)
+                            )
+                            webView.layout(0, 0, width, height)
+
+                            val document = PdfDocument()
+                            val pageInfo = PdfDocument.PageInfo.Builder(width, height, 1).create()
+                            val page = document.startPage(pageInfo)
+
+                            webView.draw(page.canvas)
+                            document.finishPage(page)
+
+                            val fos = FileOutputStream(outputFile)
+                            document.writeTo(fos)
+                            document.close()
+                            fos.close()
+
+                            val contentUri = FileProvider.getUriForFile(
+                                currentAct,
+                                "${currentAct.packageName}.provider",
+                                outputFile
+                            )
+
+                            val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                                type = "application/pdf"
+                                putExtra(Intent.EXTRA_STREAM, contentUri)
+                                putExtra(Intent.EXTRA_SUBJECT, "$jobName.pdf")
+                                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            }
+
+                            val chooser = Intent.createChooser(shareIntent, "Share Quotation PDF")
+                            chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            currentAct.startActivity(chooser)
+
+                            promise.resolve(outputFile.absolutePath)
+                        } catch (err: Exception) {
+                            promise.reject("E_PDF_GEN", err.localizedMessage ?: "Failed to generate PDF", err)
+                        }
+                    }
+                }
+                webView.loadDataWithBaseURL(null, html, "text/html", "UTF-8", null)
+            } catch (e: Exception) {
+                promise.reject("E_SHARE_PDF", e.localizedMessage ?: "Error in PDF generation", e)
             }
         }
     }

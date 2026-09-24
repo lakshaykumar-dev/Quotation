@@ -1,4 +1,4 @@
-import { NativeModules, Share, Platform } from 'react-native';
+import { NativeModules, Platform } from 'react-native';
 import { Quotation } from '../types/quotation';
 import { generateQuotationHtml } from '../utils/quotationHtml';
 
@@ -22,6 +22,24 @@ export const printQuotation = async (quotation: Quotation): Promise<boolean> => 
   }
 };
 
+export const shareQuotationPdf = async (quotation: Quotation): Promise<boolean> => {
+  const html = generateQuotationHtml(quotation);
+  const jobName = `Quotation_${quotation.date.replace(/[\/\\]/g, '-')}`;
+
+  if (Platform.OS === 'android' && QuotationPdfModule?.generateAndSharePdf) {
+    try {
+      await QuotationPdfModule.generateAndSharePdf(html, jobName);
+      return true;
+    } catch (error) {
+      console.error('Failed to generate and share PDF:', error);
+      throw error;
+    }
+  } else {
+    console.warn('Native PDF share is only available on Android native builds');
+    return false;
+  }
+};
+
 export const showNativeDatePicker = async (currentDate: string): Promise<string | null> => {
   if (Platform.OS === 'android' && QuotationPdfModule?.openDatePicker) {
     try {
@@ -33,38 +51,4 @@ export const showNativeDatePicker = async (currentDate: string): Promise<string 
     }
   }
   return null;
-};
-
-export const shareQuotationText = async (quotation: Quotation) => {
-  const itemsText = quotation.items
-    .map(
-      (item) =>
-        `${item.srNo}. ${item.particular} - ${item.qty} ${item.qtyUnit} @ ₹${item.rate} = ₹${item.amount}`
-    )
-    .join('\n');
-
-  const message = `
-*QUOTATION - ${quotation.companyDetails.name}*
-Date: ${quotation.date}
-GSTIN: ${quotation.companyDetails.gstin}
-
-*Items:*
-${itemsText}
-
-*CGST (${quotation.cgstRate}%):* ₹${quotation.cgstAmount}
-*SGST (${quotation.sgstRate}%):* ₹${quotation.sgstAmount}
-*Total Amount:* ₹${quotation.totalAmount}/-
-_${quotation.amountInWords}_
-
-*Bank Details:*
-Bank: ${quotation.bankDetails.bankName}
-Branch: ${quotation.bankDetails.branch}
-A/C: ${quotation.bankDetails.accountNumber}
-IFSC: ${quotation.bankDetails.ifscCode}
-  `.trim();
-
-  await Share.share({
-    title: `Quotation from ${quotation.companyDetails.name}`,
-    message,
-  });
 };
