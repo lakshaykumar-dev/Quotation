@@ -12,6 +12,7 @@ import {
   Switch,
   ActivityIndicator,
   Platform,
+  Image,
 } from 'react-native';
 import {
   SafeAreaProvider,
@@ -41,6 +42,8 @@ export default function App(): React.JSX.Element {
     </SafeAreaProvider>
   );
 }
+
+const shopIcon = require('./src/assets/app_icon.png');
 
 function MainContent(): React.JSX.Element {
   const insets = useSafeAreaInsets();
@@ -205,23 +208,35 @@ function MainContent(): React.JSX.Element {
 
   return (
     <View style={[styles.safeArea, { paddingBottom: insets.bottom }]}>
-      <StatusBar barStyle="light-content" />
+      <StatusBar barStyle="dark-content" backgroundColor="#FFCC00" translucent />
 
-      {/* Top Header */}
-      <View style={[styles.header, { paddingTop: statusBarHeight + 10 }]}>
-        <View style={styles.brandRow}>
-          <Text style={styles.brandIcon}>⚡</Text>
-          <View>
+      {/* Top Header Matching Shopfront Signboard */}
+      <View style={[styles.header, { paddingTop: statusBarHeight + 8 }]}>
+        <View style={styles.headerTopRow}>
+          <Image source={shopIcon} style={styles.headerLogo} resizeMode="cover" />
+          <View style={styles.headerTitleContainer}>
+            <View style={styles.marathiTitleRow}>
+              <Text style={styles.marathiTitle}>विठ्ठल हार्डवेअर</Text>
+              <Text style={styles.tradeMark}>™</Text>
+            </View>
             <Text style={styles.brandTitle}>VITTHAL HARDWARE</Text>
-            <Text style={styles.brandSubtitle}>Mobile Quotation Portal</Text>
+            <Text style={styles.brandSubtitle}>📍 Opp. Jain Dairy, Mahal Road, Bhandara</Text>
           </View>
         </View>
-        <View style={styles.statusBadge}>
-          <Text style={styles.statusText}>● Active</Text>
+
+        {/* Storefront Featured Brands Bar */}
+        <View style={styles.brandPillsRow}>
+          <View style={styles.brandPill}><Text style={styles.brandPillText}>🔧 COPPER Tools</Text></View>
+          <View style={styles.brandPill}><Text style={styles.brandPillText}>🏗️ SUPER STEEL</Text></View>
+          <View style={styles.brandPill}><Text style={styles.brandPillText}>✨ VERTIGO GOLD</Text></View>
+          <View style={styles.brandPill}><Text style={styles.brandPillText}>⚙️ FALL-GO</Text></View>
         </View>
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled">
         {/* Section 1: Company Profile */}
         <View style={styles.card}>
           <View style={styles.cardHeader}>
@@ -506,42 +521,89 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   header: {
-    backgroundColor: '#0f2c59',
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    elevation: 4,
+    backgroundColor: '#FFCC00',
+    paddingHorizontal: 14,
+    paddingBottom: 10,
+    borderBottomWidth: 3,
+    borderBottomColor: '#E0A800',
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOpacity: 0.15,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 6,
   },
-  brandRow: {
+  headerTopRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginBottom: 8,
   },
-  brandIcon: {
-    fontSize: 24,
+  headerLogo: {
+    width: 48,
+    height: 48,
+    borderRadius: 10,
+    borderWidth: 1.5,
+    borderColor: '#8B0000',
     marginRight: 10,
+    backgroundColor: '#ffffff',
+  },
+  headerTitleContainer: {
+    flex: 1,
+  },
+  marathiTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+  },
+  marathiTitle: {
+    color: '#8B0000',
+    fontSize: 21,
+    fontWeight: '900',
+    letterSpacing: 0.5,
+    textShadowColor: 'rgba(0,0,0,0.18)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+  },
+  tradeMark: {
+    color: '#8B0000',
+    fontSize: 10,
+    fontWeight: '800',
+    marginLeft: 2,
   },
   brandTitle: {
-    color: '#ffffff',
-    fontSize: 18,
+    color: '#0F172A',
+    fontSize: 12.5,
     fontWeight: '800',
-    letterSpacing: 0.5,
+    letterSpacing: 0.6,
+    marginTop: -2,
   },
   brandSubtitle: {
-    color: '#94a3b8',
-    fontSize: 11,
+    color: '#334155',
+    fontSize: 10.5,
+    fontWeight: '600',
+    marginTop: 1,
   },
-  statusBadge: {
-    backgroundColor: 'rgba(255,255,255,0.15)',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
+  brandPillsRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 6,
+    paddingTop: 6,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(139, 0, 0, 0.15)',
   },
-  statusText: {
-    color: '#4ade80',
-    fontSize: 11,
+  brandPill: {
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    paddingHorizontal: 7,
+    paddingVertical: 3,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: 'rgba(139, 0, 0, 0.2)',
+  },
+  brandPillText: {
+    color: '#8B0000',
+    fontSize: 10,
     fontWeight: '700',
+  },
+  scrollView: {
+    flex: 1,
   },
   scrollContent: {
     padding: 14,
@@ -699,14 +761,18 @@ const styles = StyleSheet.create({
     color: '#0f2c59',
   },
   summaryCard: {
-    backgroundColor: '#d4e3fc',
-    borderColor: '#93c5fd',
+    backgroundColor: '#FEF9C3',
+    borderColor: '#F59E0B',
+    borderWidth: 1.5,
   },
   summaryTitle: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '800',
-    color: '#0f2c59',
+    color: '#8B0000',
     marginBottom: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#FDE047',
+    paddingBottom: 4,
   },
   summaryRow: {
     flexDirection: 'row',
@@ -715,28 +781,30 @@ const styles = StyleSheet.create({
   },
   summaryLabel: {
     fontSize: 13,
-    color: '#1e3a8a',
+    color: '#451A03',
+    fontWeight: '600',
   },
   summaryValue: {
     fontSize: 13,
-    fontWeight: '600',
-    color: '#0f2c59',
+    fontWeight: '700',
+    color: '#1E293B',
   },
   totalRow: {
-    borderTopWidth: 1,
-    borderTopColor: '#0f2c59',
+    borderTopWidth: 1.5,
+    borderTopColor: '#B45309',
     marginTop: 6,
     paddingTop: 8,
   },
   totalLabel: {
-    fontSize: 14,
-    fontWeight: '800',
-    color: '#0f2c59',
+    fontSize: 15,
+    fontWeight: '900',
+    color: '#78350F',
+    letterSpacing: 0.5,
   },
   totalValue: {
-    fontSize: 16,
-    fontWeight: '800',
-    color: '#c00000',
+    fontSize: 18,
+    fontWeight: '900',
+    color: '#8B0000',
   },
   wordsText: {
     marginTop: 8,
@@ -751,21 +819,29 @@ const styles = StyleSheet.create({
   },
   btnSharePdf: {
     flex: 1,
-    backgroundColor: '#0f2c59',
+    backgroundColor: '#0F2C59',
     paddingVertical: 14,
     borderRadius: 8,
     marginRight: 8,
     alignItems: 'center',
-    elevation: 3,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 3,
   },
   btnDownloadPdf: {
     flex: 1,
-    backgroundColor: '#c00000',
+    backgroundColor: '#8B0000',
     paddingVertical: 14,
     borderRadius: 8,
     marginLeft: 8,
     alignItems: 'center',
-    elevation: 3,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 3,
   },
   btnActionText: {
     color: '#ffffff',

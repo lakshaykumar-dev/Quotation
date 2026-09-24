@@ -201,6 +201,7 @@ export const generateQuotationHtml = (quotation: Quotation): string => {
 </head>
 <body>
   <div class="header-center">
+    <div style="font-size: 22px; font-weight: 900; color: #8B0000; letter-spacing: 0.5px; margin-bottom: 2px;">विठ्ठल हार्डवेअर</div>
     <h1 class="company-title">${quotation.companyDetails.name}</h1>
     <div class="company-sub">ADDRESS :- ${quotation.companyDetails.address}</div>
     <div class="company-sub">GST :- ${quotation.companyDetails.gstin}</div>
