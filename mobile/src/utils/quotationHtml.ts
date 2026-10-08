@@ -92,6 +92,13 @@ export const generateQuotationHtml = (quotation: Quotation): string => {
       letter-spacing: 1px;
       margin: 0;
     }
+    .customer-name {
+      font-size: 15px;
+      font-weight: bold;
+      color: #0f2c59;
+      margin-top: 6px;
+      letter-spacing: 0.5px;
+    }
     .quotation-table {
       width: 100%;
       border-collapse: collapse;
@@ -214,6 +221,9 @@ export const generateQuotationHtml = (quotation: Quotation): string => {
 
   <div class="title-wrapper">
     <h2 class="quotation-title">QUOTATION</h2>
+    ${quotation.customerName && quotation.customerName.trim() ? `
+      <div class="customer-name">${quotation.customerName.trim()}</div>
+    ` : ''}
   </div>
 
   <table class="quotation-table">

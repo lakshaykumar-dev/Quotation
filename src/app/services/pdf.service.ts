@@ -85,12 +85,22 @@ export class PdfService {
     doc.setLineWidth(0.8);
     doc.line(105 - (titleWidth / 2), 57, 105 + (titleWidth / 2), 57);
 
+    // If customer name is provided, display below QUOTATION heading in center, smaller font
+    let tableTop = 63;
+    let itemsAreaHeight = 72;
+    if (quotation.customerName && quotation.customerName.trim()) {
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(NAVY[0], NAVY[1], NAVY[2]);
+      doc.text(quotation.customerName.trim(), 105, 63, { align: 'center' });
+      tableTop = 69;
+      itemsAreaHeight = 66;
+    }
+
     // 3. Table Layout
-    const tableTop = 63;
     const headerHeight = 10;
-    const itemsAreaHeight = 72;
     const rowHeight = 8; // Height for each table row
-    const cgstTop = tableTop + headerHeight + itemsAreaHeight; // 63 + 10 + 72 = 145
+    const cgstTop = tableTop + headerHeight + itemsAreaHeight; // Exactly 145
     const sgstTop = cgstTop + 8; // 153
     const totalTop = sgstTop + 8; // 161
     const totalHeight = 10;

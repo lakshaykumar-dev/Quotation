@@ -35,11 +35,16 @@
       <div class="header-icon">📅</div>
       <h3>General & Tax Info</h3>
     </div>
-    <div class="card-body grid-2">
-      <div class="form-group">
-        <label for="qDate">Quotation Date</label>
-        <input type="date" id="qDate" [(ngModel)]="quotation.date" (ngModelChange)="onModelChange()" />
+    <div class="card-body">
+      <div class="form-group" style="margin-bottom: 12px;">
+        <label for="customerName">Customer Name (Optional)</label>
+        <input type="text" id="customerName" [(ngModel)]="quotation.customerName" (ngModelChange)="onModelChange()" placeholder="e.g. Ramesh Patel / Shree Ganesh Traders" />
       </div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label for="qDate">Quotation Date</label>
+          <input type="date" id="qDate" [(ngModel)]="quotation.date" (ngModelChange)="onModelChange()" />
+        </div>
       <div class="form-group">
         <label>Tax Structure</label>
         <div class="tax-inputs">

@@ -22,6 +22,7 @@ export interface CompanyDetails {
 }
 
 export interface Quotation {
+  customerName?: string;
   date: string;
   companyDetails: CompanyDetails;
   bankDetails: BankDetails;

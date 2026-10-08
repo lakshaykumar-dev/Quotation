@@ -57,6 +57,7 @@ function MainContent(): React.JSX.Element {
     return `${dd}/${mm}/${yyyy}`;
   });
 
+  const [customerName, setCustomerName] = useState<string>('');
   const [company, setCompany] = useState<CompanyDetails>(defaultCompany);
   const [bank, setBank] = useState<BankDetails>(defaultBank);
   const [cgstRate, setCgstRate] = useState<string>('2.5');
@@ -106,6 +107,7 @@ function MainContent(): React.JSX.Element {
   // Quotation object snapshot
   const currentQuotation: Quotation = useMemo(
     () => ({
+      customerName: customerName.trim(),
       date,
       companyDetails: company,
       bankDetails: bank,
@@ -117,7 +119,7 @@ function MainContent(): React.JSX.Element {
       totalAmount: computedTotals.totalAmount,
       amountInWords: computedTotals.amountInWords,
     }),
-    [date, company, bank, computedTotals, cgstRate, sgstRate]
+    [customerName, date, company, bank, computedTotals, cgstRate, sgstRate]
   );
 
   const handleSaveCompany = async () => {
@@ -289,7 +291,17 @@ function MainContent(): React.JSX.Element {
         <View style={styles.card}>
           <View style={styles.cardHeader}>
             <Text style={styles.cardIcon}>📅</Text>
-            <Text style={styles.cardTitle}>Date & Tax Structure</Text>
+            <Text style={styles.cardTitle}>Date, Customer & Tax</Text>
+          </View>
+
+          <View style={styles.field}>
+            <Text style={styles.label}>Customer Name (Optional)</Text>
+            <TextInput
+              style={styles.input}
+              value={customerName}
+              onChangeText={setCustomerName}
+              placeholder="e.g. Ramesh Patel / Shree Ganesh Traders"
+            />
           </View>
 
           <View style={styles.row}>
