@@ -34,6 +34,7 @@ import {
   downloadQuotationPdf,
   showNativeDatePicker,
 } from './src/services/printService';
+import { SIGNATURE_BASE64 } from './src/assets/signatureBase64';
 
 export default function App(): React.JSX.Element {
   return (
@@ -168,6 +169,14 @@ function MainContent(): React.JSX.Element {
     setItems(updated);
   };
 
+  const handlePreview = async () => {
+    try {
+      await printQuotation(currentQuotation);
+    } catch (err: any) {
+      Alert.alert('Preview Error', err?.message || 'Could not open quotation preview.');
+    }
+  };
+
   const handleDownloadPdf = async () => {
     try {
       const savedPath = await downloadQuotationPdf(currentQuotation);
@@ -257,6 +266,7 @@ function MainContent(): React.JSX.Element {
               value={company.name}
               onChangeText={(text) => setCompany({ ...company, name: text })}
               placeholder="e.g. VITTHAL HARDWARE"
+              placeholderTextColor="#64748b"
             />
           </View>
 
@@ -267,6 +277,7 @@ function MainContent(): React.JSX.Element {
               value={company.address}
               onChangeText={(text) => setCompany({ ...company, address: text })}
               placeholder="e.g. OPP JAIN DAIRY, MAHAL ROAD..."
+              placeholderTextColor="#64748b"
             />
           </View>
 
@@ -278,6 +289,7 @@ function MainContent(): React.JSX.Element {
                 value={company.gstin}
                 onChangeText={(text) => setCompany({ ...company, gstin: text })}
                 placeholder="e.g. 27BXIPT8519D1Z2"
+                placeholderTextColor="#64748b"
                 autoCapitalize="characters"
               />
               <TouchableOpacity style={styles.btnSecondary} onPress={handleSaveCompany}>
@@ -301,6 +313,7 @@ function MainContent(): React.JSX.Element {
               value={customerName}
               onChangeText={setCustomerName}
               placeholder="e.g. Ramesh Patel / Shree Ganesh Traders"
+              placeholderTextColor="#64748b"
             />
           </View>
 
@@ -322,6 +335,8 @@ function MainContent(): React.JSX.Element {
                 style={styles.input}
                 value={cgstRate}
                 onChangeText={setCgstRate}
+                placeholder="2.5"
+                placeholderTextColor="#64748b"
                 keyboardType="decimal-pad"
               />
             </View>
@@ -331,6 +346,8 @@ function MainContent(): React.JSX.Element {
                 style={styles.input}
                 value={sgstRate}
                 onChangeText={setSgstRate}
+                placeholder="2.5"
+                placeholderTextColor="#64748b"
                 keyboardType="decimal-pad"
               />
             </View>
@@ -352,6 +369,7 @@ function MainContent(): React.JSX.Element {
                 value={bank.bankName}
                 onChangeText={(text) => setBank({ ...bank, bankName: text })}
                 placeholder="e.g. RTGS/NEFT ICICI BANK"
+                placeholderTextColor="#64748b"
               />
             </View>
             <View style={[styles.field, styles.flex1]}>
@@ -361,6 +379,7 @@ function MainContent(): React.JSX.Element {
                 value={bank.branch}
                 onChangeText={(text) => setBank({ ...bank, branch: text })}
                 placeholder="e.g. BHANDARA"
+                placeholderTextColor="#64748b"
               />
             </View>
           </View>
@@ -373,6 +392,7 @@ function MainContent(): React.JSX.Element {
                 value={bank.accountNumber}
                 onChangeText={(text) => setBank({ ...bank, accountNumber: text })}
                 placeholder="e.g. 049505005700"
+                placeholderTextColor="#64748b"
                 keyboardType="number-pad"
               />
             </View>
@@ -383,6 +403,7 @@ function MainContent(): React.JSX.Element {
                 value={bank.ifscCode}
                 onChangeText={(text) => setBank({ ...bank, ifscCode: text })}
                 placeholder="e.g. ICIC0000495"
+                placeholderTextColor="#64748b"
                 autoCapitalize="characters"
               />
             </View>
@@ -433,6 +454,7 @@ function MainContent(): React.JSX.Element {
                   value={item.particular}
                   onChangeText={(text) => handleItemChange(index, 'particular', text)}
                   placeholder="e.g. Safety Shoes, Helmet, etc."
+                  placeholderTextColor="#64748b"
                 />
               </View>
 
@@ -445,6 +467,8 @@ function MainContent(): React.JSX.Element {
                     onChangeText={(text) =>
                       handleItemChange(index, 'qty', parseInt(text, 10) || 0)
                     }
+                    placeholder="1"
+                    placeholderTextColor="#64748b"
                     keyboardType="number-pad"
                   />
                 </View>
@@ -455,6 +479,7 @@ function MainContent(): React.JSX.Element {
                     value={item.qtyUnit}
                     onChangeText={(text) => handleItemChange(index, 'qtyUnit', text)}
                     placeholder="pair"
+                    placeholderTextColor="#64748b"
                   />
                 </View>
                 <View style={[styles.field, styles.flex1]}>
@@ -465,6 +490,8 @@ function MainContent(): React.JSX.Element {
                     onChangeText={(text) =>
                       handleItemChange(index, 'rate', parseFloat(text) || 0)
                     }
+                    placeholder="0"
+                    placeholderTextColor="#64748b"
                     keyboardType="decimal-pad"
                   />
                 </View>
@@ -507,12 +534,29 @@ function MainContent(): React.JSX.Element {
 
         {/* Action Buttons */}
         <View style={styles.actionsContainer}>
-          <TouchableOpacity style={styles.btnSharePdf} onPress={handleSharePdf}>
-            <Text style={styles.btnActionText}>📤 Share PDF</Text>
+          <TouchableOpacity
+            style={styles.btnPreview}
+            onPress={handlePreview}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.btnActionText}>👁️ Preview / Print Quotation</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.btnDownloadPdf} onPress={handleDownloadPdf}>
-            <Text style={styles.btnActionText}>📥 Download PDF</Text>
-          </TouchableOpacity>
+          <View style={styles.actionButtonsRow}>
+            <TouchableOpacity
+              style={styles.btnSharePdf}
+              onPress={handleSharePdf}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.btnActionText}>📤 Share PDF</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.btnDownloadPdf}
+              onPress={handleDownloadPdf}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.btnActionText}>📥 Download PDF</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </ScrollView>
@@ -833,18 +877,32 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
   },
   actionsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 6,
+    marginTop: 8,
   },
-  btnSharePdf: {
-    flex: 1,
+  btnPreview: {
     backgroundColor: '#0F2C59',
     paddingVertical: 14,
     borderRadius: 8,
-    marginRight: 8,
     alignItems: 'center',
+    marginBottom: 8,
     elevation: 4,
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 3,
+  },
+  actionButtonsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  btnSharePdf: {
+    flex: 1,
+    backgroundColor: '#334155',
+    paddingVertical: 14,
+    borderRadius: 8,
+    marginRight: 6,
+    alignItems: 'center',
+    elevation: 3,
     shadowColor: '#000',
     shadowOpacity: 0.2,
     shadowOffset: { width: 0, height: 2 },
@@ -855,9 +913,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#8B0000',
     paddingVertical: 14,
     borderRadius: 8,
-    marginLeft: 8,
+    marginLeft: 6,
     alignItems: 'center',
-    elevation: 4,
+    elevation: 3,
     shadowColor: '#000',
     shadowOpacity: 0.2,
     shadowOffset: { width: 0, height: 2 },
